@@ -1,5 +1,5 @@
 import './App.css';
-import Waterfall from './scenes/waterfall';
+// import Waterfall from './scenes/waterfall';
 import EnhancedTable from './tests/anotherTable';
 
 function App() {

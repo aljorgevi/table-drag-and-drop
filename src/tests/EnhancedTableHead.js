@@ -94,35 +94,66 @@ export default function EnhancedTableHead(props) {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <TableHead>
-        <TableRow>
-          {}
-          <TableCell padding='checkbox'></TableCell>
-          {columnData.map(headCell => {
-            console.log(headCell);
-            return (
-              <TableCell
-                key={headCell.id}
-                align={headCell.numeric ? 'right' : 'left'}
-                padding={headCell.disablePadding ? 'none' : 'normal'}
-                sortDirection={orderBy === headCell.id ? order : false}
-              >
-                <TableSortLabel
-                  active={orderBy === headCell.id}
-                  direction={orderBy === headCell.id ? order : 'asc'}
-                  onClick={createSortHandler(headCell.id)}
-                >
-                  {headCell.label}
-                  {orderBy === headCell.id ? (
-                    <Box component='span' sx={visuallyHidden}>
-                      {order === 'desc'
-                        ? 'sorted descending'
-                        : 'sorted ascending'}
-                    </Box>
-                  ) : null}
-                </TableSortLabel>
-              </TableCell>
-            );
-          })}
+        <TableRow
+          component={Droppable}
+          droppableId='droppable'
+          direction='horizontal'
+          style={{ padding: 0 }}
+        >
+          {(provided, snapshot) => (
+            <tr
+              key={snapshot.toString()}
+              ref={provided.innerRef}
+              // style={{
+              //   ...getListStyle(snapshot.isDraggingOver),
+              //   padding: 0
+              // }}
+              {...provided.droppableProps}
+            >
+              <TableCell padding='checkbox'></TableCell>
+              {columnData.map((headCell, index) => {
+                console.log(headCell);
+                return (
+                  <TableCell
+                    key={headCell.id}
+                    align={headCell.numeric ? 'right' : 'left'}
+                    padding={headCell.disablePadding ? 'none' : 'normal'}
+                    sortDirection={orderBy === headCell.id ? order : false}
+                  >
+                    <Draggable
+                      key={headCell.id}
+                      draggableId={headCell.id}
+                      index={index}
+                    >
+                      {(provided, snapshot) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                        >
+                          <TableSortLabel
+                            active={orderBy === headCell.id}
+                            direction={orderBy === headCell.id ? order : 'asc'}
+                            onClick={createSortHandler(headCell.id)}
+                          >
+                            {headCell.label}
+                            {orderBy === headCell.id ? (
+                              <Box component='span' sx={visuallyHidden}>
+                                {order === 'desc'
+                                  ? 'sorted descending'
+                                  : 'sorted ascending'}
+                              </Box>
+                            ) : null}
+                          </TableSortLabel>
+                        </div>
+                      )}
+                    </Draggable>
+                  </TableCell>
+                );
+              })}
+              {provided.placeholder}
+            </tr>
+          )}
         </TableRow>
       </TableHead>
     </DragDropContext>
